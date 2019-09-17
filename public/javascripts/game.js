@@ -2,9 +2,15 @@
 // Lots of options can be placed in this object.
 var config = {
     type: Phaser.AUTO,
-    width: 800,
-    height: 600,
+    scale: {
+        mode: Phaser.Scale.FIT,
+        parent: 'game-container',
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+        width: '100%',
+        height: '100%',
+    },
     physics: {
+
         default: 'arcade',
         arcade: {
             gravity: {y: 300},
@@ -40,20 +46,21 @@ var character;
 function create() {
 
     /** ADD SKY **/
-    this.add.image(400, 300, 'sky'); // x & y coordinates are based on the center of the image.
+    this.bg = this.add.image(window.innerWidth/2, window.innerHeight/2, 'sky'); // x & y coordinates are based on the center of the image.
+    this.bg.setDisplaySize(window.innerWidth,window.innerHeight);
 
     /** ADD PLATFORMS **/
     // Create a group of static platform objects.
     platforms = this.physics.add.staticGroup();
-    platforms.create(400, 568, 'ground').setScale(2).refreshBody(); // Double the scale and refresh to apply changes.
+    this.ground = platforms.create(950, 950, 'ground').setScale(2).refreshBody(); // Double the scale and refresh to apply changes.
     // Create the rest of the platforms.
-    platforms.create(600, 400, 'ground');
-    platforms.create(50, 250, 'ground');
-    platforms.create(750, 220, 'ground');
+    platforms.create(500, 600, 'ground');
+    platforms.create(680, 760, 'ground');
+    platforms.create(1500, 760, 'ground');
 
     /** ADD PLAYER **/
     // Create character.
-    character = this.physics.add.sprite(100, 450, 'bunny'); // Create character.
+    character = this.physics.add.sprite(window.innerWidth/2, window.innerHeight/2, 'bunny'); // Create character.
     character.setBounce(0.2); // Add bounce when character falls.
     character.setCollideWorldBounds(true); // Prevents character from falling past the canvas size.
 
