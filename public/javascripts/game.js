@@ -13,7 +13,7 @@ var config = {
 
         default: 'arcade',
         arcade: {
-            gravity: {y: 300},
+            gravity: {y: 600},
             debug: false
         }
     },
@@ -45,6 +45,7 @@ var character;
 
 function create() {
 
+
     /** ADD SKY **/
     this.bg = this.add.image(window.innerWidth/2, window.innerHeight/2, 'sky'); // x & y coordinates are based on the center of the image.
     this.bg.setDisplaySize(window.innerWidth,window.innerHeight);
@@ -63,6 +64,9 @@ function create() {
     character = this.physics.add.sprite(window.innerWidth/2, window.innerHeight/2, 'bunny'); // Create character.
     character.setBounce(0.2); // Add bounce when character falls.
     character.setCollideWorldBounds(true); // Prevents character from falling past the canvas size.
+    this.cameras.main.setBounds(0,0,3200,0);
+    this.cameras.main.startFollow(character,true);
+
 
     // Create character animations.
     // Walking to the left animation.
@@ -99,10 +103,10 @@ function update() {
     cursors = this.input.keyboard.createCursorKeys();
 
     if (cursors.left.isDown) { // Go left.
-        character.setVelocityX(-160);
+        character.setVelocityX(-300);
         character.anims.play('left', true);
     } else if (cursors.right.isDown) { // Go right.
-        character.setVelocityX(160);
+        character.setVelocityX(300);
         character.anims.play('right', true);
     } else { // Stand still.
         character.setVelocityX(0);
@@ -111,6 +115,6 @@ function update() {
 
     // Jump
     if (cursors.up.isDown && character.body.touching.down) {
-        character.setVelocityY(-330);
+        character.setVelocityY(-350);
     }
 }
