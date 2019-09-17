@@ -13,7 +13,7 @@ var config = {
 
         default: 'arcade',
         arcade: {
-            gravity: {y: 600},
+            gravity: {y: 700},
             debug: false
         }
     },
@@ -33,9 +33,9 @@ function preload() {
     this.load.image('ground', 'images/assets/platform.png');
     this.load.image('star', 'images/assets/star.png');
     this.load.image('bomb', 'images/assets/bomb.png');
-    this.load.spritesheet('bunny', 'images/assets/pj.jpg', {
-        frameWidth: 96
-        , frameHeight: 96
+    this.load.spritesheet('bunny', 'images/assets/bunny_left_right.png', {
+        frameWidth: 52.05
+        , frameHeight: 45
     });
 }
 
@@ -47,8 +47,8 @@ function create() {
 
 
     /** ADD SKY **/
-    this.bg = this.add.image(window.innerWidth/2, window.innerHeight/2, 'sky'); // x & y coordinates are based on the center of the image.
-    this.bg.setDisplaySize(window.innerWidth,window.innerHeight);
+    this.bg = this.add.image(window.innerWidth / 2, window.innerHeight / 2, 'sky'); // x & y coordinates are based on the center of the image.
+    this.bg.setDisplaySize(5000, window.innerHeight);
 
     /** ADD PLATFORMS **/
     // Create a group of static platform objects.
@@ -61,18 +61,18 @@ function create() {
 
     /** ADD PLAYER **/
     // Create character.
-    character = this.physics.add.sprite(window.innerWidth/2, window.innerHeight/2, 'bunny'); // Create character.
+    character = this.physics.add.sprite(window.innerWidth / 2, window.innerHeight / 2, 'bunny'); // Create character.
     character.setBounce(0.2); // Add bounce when character falls.
     character.setCollideWorldBounds(true); // Prevents character from falling past the canvas size.
-    this.cameras.main.setBounds(0,0,3200,0);
-    this.cameras.main.startFollow(character,true);
+    this.cameras.main.setBounds(0, 0, window.innerWidth * 2, 0);
+    this.cameras.main.startFollow(character, true, 0.08, 0.08);
 
 
     // Create character animations.
     // Walking to the left animation.
     this.anims.create({
         key: 'left',
-        frames: this.anims.generateFrameNumbers('bunny', {start: 0, end: 1}), // Use frames 0,1,2,3 of sprite sheet
+        frames: this.anims.generateFrameNumbers('bunny', {start: 0, end: 4}), // Use frames 0,1,2,3 of sprite sheet
         frameRate: 10, // run above frames at 10 frames per second.
         repeat: -1 // Loop animation
     });
@@ -87,11 +87,17 @@ function create() {
     // Walking to the right animation.
     this.anims.create({
         key: 'right',
-        frames: this.anims.generateFrameNumbers('bunny', {start: 0, end: 1}), // Use frames 5,6,7,8 of sprite sheet.
+        frames: this.anims.generateFrameNumbers('bunny', {start: 0, end: 4}), // Use frames 5,6,7,8 of sprite sheet.
         frameRate: 10,
         repeat: -1
     });
 
+    this.anims.create({
+        key: 'down',
+        frames: this.anims.generateFrameNumbers('bunny', {start: 1, end: 1}),
+        frameRate: 1,
+        repeat: 0
+    })
     /** ADD COLLISION BETWEEN PLAYER AND PLATFORMS **/
     this.physics.add.collider(character, platforms);
 }
@@ -103,11 +109,21 @@ function update() {
     cursors = this.input.keyboard.createCursorKeys();
 
     if (cursors.left.isDown) { // Go left.
-        character.setVelocityX(-300);
-        character.anims.play('left', true);
+        character.setVelocityX(-300).setFlipX(false);
+        if (character.body.touching.down) {
+            character.anims.play('left', true);
+        }
     } else if (cursors.right.isDown) { // Go right.
-        character.setVelocityX(300);
-        character.anims.play('right', true);
+        character.setVelocityX(300).setFlipX(true);
+        if (character.body.touching.down) {
+            character.anims.play('right', true);
+        }
+    } else if (cursors.down.isDown) {
+        if (!character.body.touching.down) {
+            character.y += 2.5;
+        }
+        character.setVelocityY(350)
+        character.anims.play('down', true);
     } else { // Stand still.
         character.setVelocityX(0);
         character.anims.play('turn', true);
@@ -115,6 +131,7 @@ function update() {
 
     // Jump
     if (cursors.up.isDown && character.body.touching.down) {
-        character.setVelocityY(-350);
+        character.setVelocityY(-500);
+        character.anims.play('down', true);
     }
 }
