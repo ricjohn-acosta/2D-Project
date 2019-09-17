@@ -65,7 +65,7 @@ function create() {
     character.setBounce(0.2); // Add bounce when character falls.
     character.setCollideWorldBounds(true); // Prevents character from falling past the canvas size.
     this.cameras.main.setBounds(0, 0, window.innerWidth * 2, 0);
-    this.cameras.main.startFollow(character, true, 0.08, 0.08);
+    this.cameras.main.startFollow(character, 0.08);
 
 
     // Create character animations.
